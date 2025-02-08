@@ -11,20 +11,15 @@ struct JsonData {
 }
 
 fn main() -> io::Result<()> {
-    // 加载汉字编码数据
     let word_dict = load_word_dict("data.json")?;
-    
-    // 加载复姓集合
+
     let compound_surnames_set = load_compound_surnames_set("compound_surnames.txt")?;
-    
-    // 读取并处理姓名列表
+
     let mut names = load_names("names.txt")?;
-    names.reverse(); // 保持与Python [::-1] 一致
-    
-    // 自定义排序
+    names.reverse(); 
+
     names.sort_by(|a, b| compare_names(a, b, &compound_surnames_set, &word_dict));
     
-    // 写入结果
     write_output("out.txt", &names)?;
     
     Ok(())
@@ -74,20 +69,16 @@ fn split_name(name: &str, compound_surnames_set: &HashSet<String>) -> (String, S
 
 fn compare_chars(a: &str, b: &str, dict: &HashMap<String, String>) -> std::cmp::Ordering {
     for (c1, c2) in a.chars().zip(b.chars()) {
-        let c1_str = c1.to_string(); // 将 c1 转换为 String 并存储到变量中
-        let c2_str = c2.to_string(); // 将 c2 转换为 String 并存储到变量中
+        let c1_str = c1.to_string();
+        let c2_str = c2.to_string();
 
-        // 提前创建一个持久的默认值
         let default_code = "66666".to_string();
 
-        // 使用变量作为默认值
         let code1 = dict.get(&c1_str).unwrap_or(&default_code);
         let code2 = dict.get(&c2_str).unwrap_or(&default_code);
 
-        // 优先比较编码长度
         match code1.len().cmp(&code2.len()) {
             std::cmp::Ordering::Equal => {
-                // 长度相同则比较字典序
                 match code1.cmp(code2) {
                     std::cmp::Ordering::Equal => continue,
                     ord => return ord,
@@ -96,7 +87,7 @@ fn compare_chars(a: &str, b: &str, dict: &HashMap<String, String>) -> std::cmp::
             ord => return ord,
         }
     }
-    // 最后比较字符串长度
+
     a.len().cmp(&b.len())
 }
 
@@ -109,10 +100,8 @@ fn compare_names(
     let (surname_a, given_a) = split_name(a, compound_surnames_set);
     let (surname_b, given_b) = split_name(b, compound_surnames_set);
     
-    // 先比较姓氏
     match compare_chars(&surname_a, &surname_b, word_dict) {
         std::cmp::Ordering::Equal => {
-            // 姓氏相同则比较名字
             compare_chars(&given_a, &given_b, word_dict)
         }
         ord => ord,
