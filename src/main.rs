@@ -111,7 +111,7 @@ fn compare_names(
 fn write_output<P: AsRef<Path>>(path: P, names: &[String]) -> io::Result<()> {
     let mut file = File::create(path)?;
     for name in names {
-        writeln!(file, "{}", name)?;
+        write!(file, "{} ", name)?;
     }
     Ok(())
 }
