@@ -10,3 +10,5 @@ In Gitee, there is the same edition as this one to ensure that users who want to
 <font color = red> CAUTION: This proj is a stupid and naive toy and can not ensure result correct.</font>
 
 按姓名笔画排列，目前还没有做按姓氏笔画排列。
+
+其中data.json引用了[wykdq的namesort](https://github.com/wykdg/name_sort)
